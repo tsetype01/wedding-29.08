@@ -1,0 +1,39 @@
+<script>
+  // URL обернут в кавычки — это важно для работы скрипта
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz29iFN0CcGOvUJg3sS9Avq5ZYBfi_QUwW4vX5wprTuRh1Z-pgTUwg8-KJB0KFaUm4r2Q/exec'; 
+
+  async function submitRSVP() {
+    const name = document.getElementById('fullName').value.trim();
+    const rsvp = document.querySelector('input[name="rsvp"]:checked');
+    const btn = document.getElementById('submitBtn');
+
+    // Простая проверка на заполненность
+    if (!name) { alert('Аты-жөніңізді енгізіңіз / Пожалуйста, введите имя'); return; }
+    if (!rsvp) { alert('Жауабыңызды таңдаңыз / Пожалуйста, выберите ответ'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Жіберілуде... / Отправка...';
+
+    const payload = {
+      name: name,
+      rsvp: rsvp.value,
+      timestamp: new Date().toLocaleString('kk-KZ')
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      alert('Жауабыңыз қабылданды! / Ваш ответ принят!');
+      btn.textContent = 'Жіберілді / Отправлено';
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Жіберу / Отправить';
+      alert('Қате орын алды, қайталап көріңіз / Произошла ошибка, попробуйте снова');
+    }
+  }
+</script>
